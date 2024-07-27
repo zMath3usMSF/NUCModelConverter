@@ -51,7 +51,7 @@ namespace NUCModelConverter
                 int f = 0;
                 for (int i = 1; i < block.vertexList.Count; i++)
                 {
-                    f += block.vertexList[i - 1].Count / 3;
+                    f += block.vertexList[i - 1].Count;
                     for(int j = 0; j < block.facesIndicesList[i].Count; j++)
                     {
                         block.facesIndicesList[i][j] += f;
@@ -61,7 +61,7 @@ namespace NUCModelConverter
                            block.facesIndicesList, block.normalsIndicesList, block.uvsIndicesList, block.currentModel);
             }
         }
-        private void ModelToOBJ(List<List<float>> vertexList, List<List<float>> normalsList, List<List<float>> uvsList, 
+        private void ModelToOBJ(List<List<List<float>>> vertexList, List<List<float>> normalsList, List<List<float>> uvsList, 
                                 List<List<int>> facesIndicesList, List<List<int>> normalsIndicesList, List<List<int>> uvsIndicesList,
                                 int modelCount)
         {
@@ -83,11 +83,11 @@ namespace NUCModelConverter
             }
             for (int i = 0; i < modelCount; i++)
             {
-                for (int j = 0; j < vertexList[i].Count; j += 3)
+                for (int j = 0; j < vertexList[i].Count; j ++)
                 {
-                    float x = vertexList[i][j];
-                    float y = vertexList[i][j + 1];
-                    float z = vertexList[i][j + 2];
+                    float x = vertexList[i][j][0];
+                    float y = vertexList[i][j][1];
+                    float z = vertexList[i][j][2];
 
                     string formattedVertex = $"v {Math.Round(-x, 4):0.0000} {Math.Round(-y, 4):0.0000} {Math.Round(z, 4):0.0000}\n";
                     formattedVertex = formattedVertex.Replace(',', '.');

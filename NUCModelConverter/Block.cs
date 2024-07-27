@@ -17,7 +17,7 @@ namespace NUCModelConverter
         bool isChildModel = false;
         int initIndex = 0;
         int lastMainModel = 0;
-        public List<List<float>> vertexList = new List<List<float>>();
+        public List<List<List<float>>> vertexList = new List<List<List<float>>>();
         public List<List<float>> vertexNormalsList = new List<List<float>>();
         public List<List<float>> uvsList = new List<List<float>>();
         public List<List<int>> facesIndicesList = new List<List<int>>();
@@ -36,7 +36,7 @@ namespace NUCModelConverter
         }
         public void InitLists()
         {
-            vertexList.Add(new List<float>());
+            vertexList.Add(new List<List<float>>());
             vertexNormalsList.Add(new List<float>());
             uvsList.Add(new List<float>());
             facesIndicesList.Add(new List<int>());
@@ -152,21 +152,31 @@ namespace NUCModelConverter
             }
             byte[] vertexBuffer = new byte[0xC];
             int vertexLength = buffer[2];
-            for (int i = 0; i < vertexLength; i++)
+            if (vertexList[currentModel - 1].Count == 0)
+            {
+                for (int i = 0; i < teste[0][0] + 1; i++)
+                {
+                    vertexList[currentModel - 1].Add(new List<float>());
+                }
+            }
+
+            for (int i = 0; i < teste[0].Count; i++)
             {
                 ms.Read(vertexBuffer, 0, 0xC);
-                vertexList[currentModel - 1].Insert(teste[0][i] * 3, BitConverter.ToSingle(vertexBuffer, 0));
-                vertexList[currentModel - 1].Insert(teste[0][i] * 3 + 1, BitConverter.ToSingle(vertexBuffer, 4));
-                vertexList[currentModel - 1].Insert(teste[0][i] * 3 + 2, BitConverter.ToSingle(vertexBuffer, 8));
+                vertexList[currentModel - 1][teste[0][i]].Add(BitConverter.ToSingle(vertexBuffer, 0));
+                vertexList[currentModel - 1][teste[0][i]].Add(BitConverter.ToSingle(vertexBuffer, 4));
+                vertexList[currentModel - 1][teste[0][i]].Add(BitConverter.ToSingle(vertexBuffer, 8));
                 ms.Seek(4, SeekOrigin.Current);
             }
             if(isChildModel == true)
             {
                 for(int i = 0; i < vertexList[currentModel - 1].Count; i++)
                 {
-                    if (vertexList[currentModel - 1][i] == 999f)
+                    if (vertexList[currentModel - 1][i].Count == 0)
                     {
-                        vertexList[currentModel - 1][i] = vertexList[lastMainModel][i];
+                        vertexList[currentModel - 1][i].Add(vertexList[lastMainModel][i][0]);
+                        vertexList[currentModel - 1][i].Add(vertexList[lastMainModel][i][1]);
+                        vertexList[currentModel - 1][i].Add(vertexList[lastMainModel][i][2]);
                     }
                 }
             }
